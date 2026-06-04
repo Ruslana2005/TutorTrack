@@ -1,0 +1,112 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TutorTrack - Вход</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+        }
+        .login-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .login-box {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 300px;
+            text-align: center;
+        }
+        .tutor-box {
+            border-top: 5px solid #007bff;
+        }
+        .student-box {
+            border-top: 5px solid #28a745;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .student-box button {
+            background: #28a745;
+        }
+        .student-box button:hover {
+            background: #218838;
+        }
+        .tutor-box button:hover {
+            background: #0056b3;
+        }
+        .error {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Блок для репетитора -->
+        <div class="login-box tutor-box">
+            <div class="icon">👨‍🏫</div>
+            <h2>Вход для репетитора</h2>
+            <form method="POST" action="/login">
+                <input type="hidden" name="login_type" value="tutor">
+                <input type="password" name="tutor_password" placeholder="Пароль репетитора" required>
+                <button type="submit">Войти как репетитор</button>
+            </form>
+        </div>
+
+        <!-- Блок для ученика -->
+        <div class="login-box student-box">
+            <div class="icon">🧑‍🎓</div>
+            <h2>Вход для ученика</h2>
+            <form method="POST" action="/login">
+                <input type="hidden" name="login_type" value="student">
+                <input type="number" name="user_id" placeholder="Ваш ID" required>
+                <button type="submit">Войти как ученик</button>
+            </form>
+        </div>
+    </div>
+
+    {% if error %}
+        <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #ff4444; color: white; padding: 10px 20px; border-radius: 8px;">
+            {{ error }}
+        </div>
+    {% endif %}
+</body>
+</html>

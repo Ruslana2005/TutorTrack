@@ -1,0 +1,14 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!DOCTYPE html>
+<html>
+<head><title>Предметы</title></head>
+<body>
+    <h1>Предметы</h1>
+    <a href="/">Назад</a>
+    <table border="1"><tr><th>Название</th><th>Описание</th></tr>
+    {% for sub in subjects %}<tr><td>{{ sub.name }}</td><td>{{ sub.description or '-' }}</td></tr>{% endfor %}
+    </table>
+    <h2>Добавить</h2>
+    <form method="POST" action="/subject/add"><input name="name" placeholder="Название" required><br><input name="description" placeholder="Описание"><br><button>Добавить</button></form>
+</body>
+</html>

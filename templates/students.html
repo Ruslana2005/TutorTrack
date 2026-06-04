@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>TutorTrack - Ученики</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 15px 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo i { font-size: 32px; color: #667eea; }
+        .logo h1 { font-size: 24px; color: #333; }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: #f0f2f5;
+            padding: 8px 20px;
+            border-radius: 40px;
+        }
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 25px;
+            text-decoration: none;
+        }
+        
+        .nav-menu {
+            background: white;
+            border-radius: 60px;
+            padding: 10px 25px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .nav-menu a {
+            text-decoration: none;
+            color: #555;
+            padding: 10px 20px;
+            border-radius: 40px;
+            transition: 0.3s;
+        }
+        .nav-menu a:hover { background: #667eea; color: white; }
+        .nav-menu a i { margin-right: 8px; }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .card h2 {
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background: #f8f9fa;
+            color: #555;
+        }
+        
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #555; }
+        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 10px; }
+        .btn {
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover { background: #218838; }
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .btn-delete:hover { background: #c82333; }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-users"></i>
+                <h1>TutorTrack</h1>
+            </div>
+            <div class="user-info">
+                <i class="fas fa-user-circle"></i>
+                <span><strong>{{ current_user.first_name }} {{ current_user.last_name }}</strong> <span style="color: #667eea;">(Репетитор)</span></span>
+                <a href="/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+            </div>
+        </div>
+
+        <div class="nav-menu">
+            <a href="/"><i class="fas fa-calendar-alt"></i> Уроки</a>
+            <a href="/students" style="background: #ffc107; color: #333;"><i class="fas fa-users"></i> Ученики</a>
+            <a href="/lesson/add"><i class="fas fa-plus-circle"></i> Новый урок</a>
+        </div>
+
+        <div class="card">
+            <h2><i class="fas fa-list"></i> Список учеников</h2>
+            {% if students %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Фамилия</th>
+                        <th>Имя</th>
+                        <th>Возраст</th>
+                        <th>Телефон ученика</th>
+                        <th>Телефон родителя</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ student.student_id }}</td>
+                        <td>{{ student.last_name }}</td>
+                        <td>{{ student.first_name }}</td>
+                        <td>{{ student.age if student.age else '-' }}</td>
+                        <td>{{ student.contact_phone if student.contact_phone else '-' }}</td>
+                        <td>{{ student.parent_phone if student.parent_phone else '-' }}</td>
+                        <td>
+                            <form method="POST" action="/student/delete/{{ student.student_id }}" onsubmit="return confirm('Удалить ученика {{ student.last_name }} {{ student.first_name }}? Все его уроки также будут удалены.')">
+                                <button type="submit" class="btn-delete"><i class="fas fa-trash"></i> Удалить</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-user-graduate" style="font-size: 50px; margin-bottom: 15px;"></i>
+                <p>Нет учеников</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <h2><i class="fas fa-user-plus"></i> Добавить ученика</h2>
+            <form method="POST" action="/student/add">
+                <div class="form-group">
+                    <label>Фамилия *</label>
+                    <input type="text" name="last_name" required>
+                </div>
+                <div class="form-group">
+                    <label>Имя *</label>
+                    <input type="text" name="first_name" required>
+                </div>
+                <div class="form-group">
+                    <label>Возраст</label>
+                    <input type="number" name="age">
+                </div>
+                <div class="form-group">
+                    <label>Телефон ученика</label>
+                    <input type="text" name="contact_phone">
+                </div>
+                <div class="form-group">
+                    <label>Телефон родителя</label>
+                    <input type="text" name="parent_phone">
+                </div>
+                <button type="submit" class="btn"><i class="fas fa-save"></i> Сохранить</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

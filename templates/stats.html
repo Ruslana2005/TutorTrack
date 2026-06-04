@@ -1,0 +1,32 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TutorTrack - Статистика</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .stats { display: flex; gap: 20px; }
+        .card { background: #f2f2f2; padding: 20px; border-radius: 10px; text-align: center; min-width: 150px; }
+        .number { font-size: 36px; font-weight: bold; color: #007bff; }
+    </style>
+</head>
+<body>
+    <h1>📊 Статистика</h1>
+    <a href="/">← На главную</a>
+
+    <div class="stats">
+        <div class="card">
+            <div class="number">{{ students_count }}</div>
+            <div>Учеников</div>
+        </div>
+        <div class="card">
+            <div class="number">{{ lessons_count }}</div>
+            <div>Уроков</div>
+        </div>
+        <div class="card">
+            <div class="number">{{ homeworks_count }}</div>
+            <div>Домашних заданий</div>
+        </div>
+    </div>
+</body>
+</html>

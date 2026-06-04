@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>TutorTrack - Лавка</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 15px 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo i { font-size: 32px; color: #667eea; }
+        .logo h1 { font-size: 24px; color: #333; }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: #f0f2f5;
+            padding: 8px 20px;
+            border-radius: 40px;
+        }
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 25px;
+            text-decoration: none;
+        }
+        
+        .nav-menu {
+            background: white;
+            border-radius: 60px;
+            padding: 10px 25px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .nav-menu a {
+            text-decoration: none;
+            color: #555;
+            padding: 10px 20px;
+            border-radius: 40px;
+            transition: 0.3s;
+        }
+        .nav-menu a:hover { background: #667eea; color: white; }
+        .nav-menu a i { margin-right: 8px; }
+        
+        .balance-card {
+            background: linear-gradient(135deg, #ffc107, #ff9800);
+            border-radius: 20px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            color: white;
+        }
+        .balance-value {
+            font-size: 48px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .prizes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        .prize-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .prize-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .prize-icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 30px;
+            font-size: 50px;
+        }
+        .prize-info { padding: 20px; }
+        .prize-name { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+        .prize-description { color: #666; font-size: 14px; margin-bottom: 15px; }
+        .prize-cost {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffc107;
+            margin-bottom: 15px;
+        }
+        .choice-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .choice-btn {
+            flex: 1;
+            padding: 10px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
+            text-align: center;
+        }
+        .choice-btn:hover { background: #218838; }
+        .choice-btn.disabled, .choice-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .used-btn {
+            width: 100%;
+            padding: 10px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            text-align: center;
+        }
+        .error-message {
+            background: #dc3545;
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        @media (max-width: 768px) {
+            .prizes-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-store"></i>
+                <h1>TutorTrack</h1>
+            </div>
+            <div class="user-info">
+                <i class="fas fa-user-circle"></i>
+                <span><strong>{{ current_user.first_name }} {{ current_user.last_name }}</strong> <span style="color: #28a745;">(Ученик)</span></span>
+                <a href="/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+            </div>
+        </div>
+
+        <div class="nav-menu">
+            <a href="/"><i class="fas fa-calendar-alt"></i> Уроки</a>
+            <a href="/achievements"><i class="fas fa-trophy"></i> Достижения</a>
+            <a href="/shop" style="background: #ffc107; color: #333;"><i class="fas fa-store"></i> Лавка</a>
+        </div>
+
+        <div class="balance-card">
+            <div><i class="fas fa-star"></i> Твои кубки</div>
+            <div class="balance-value">
+                {{ total_points }} <i class="fas fa-star" style="color: #ffc107;"></i>
+            </div>
+        </div>
+
+        {% if error %}
+        <div class="error-message">
+            <i class="fas fa-exclamation-triangle"></i> {{ error }}
+        </div>
+        {% endif %}
+
+        <div class="prizes-grid">
+            <!-- Приз за 50 кубков -->
+            <div class="prize-card">
+                <div class="prize-icon"><i class="fas fa-percent"></i></div>
+                <div class="prize-info">
+                    <div class="prize-name">Сертификат "Скидка на уроки 200 рублей"</div>
+                    <div class="prize-description">Скидка 200 рублей на следующие уроки</div>
+                    <div class="prize-cost"><i class="fas fa-star"></i> 50 кубков</div>
+                    {% if 7 in exchanged_prize_ids %}
+                        <div class="used-btn">✅ Уже использован</div>
+                    {% elif total_points >= 50 %}
+                        <button class="choice-btn exchange-btn" data-action="/shop/exchange/7">🎁 Обменять</button>
+                    {% else %}
+                        <button class="choice-btn disabled" disabled>❌ Не хватает {{ 50 - total_points }} кубков</button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Приз за 100 кубков (выбор) -->
+            <div class="prize-card">
+                <div class="prize-icon"><i class="fas fa-box"></i> <i class="fas fa-apple"></i></div>
+                <div class="prize-info">
+                    <div class="prize-name">Выбери приз на 100 кубков</div>
+                    <div class="prize-description">Сертификат ОЗОН 300 рублей ИЛИ Золотое яблоко 300 рублей</div>
+                    <div class="prize-cost"><i class="fas fa-star"></i> 100 кубков</div>
+                    {% if has_exchanged_100 %}
+                        <div class="used-btn">✅ Уже использован</div>
+                    {% elif total_points >= 100 %}
+                        <div class="choice-buttons">
+                            <button class="choice-btn exchange-btn" data-action="/shop/exchange/100_choice" data-choice="ozon">🎁 ОЗОН</button>
+                            <button class="choice-btn exchange-btn" data-action="/shop/exchange/100_choice" data-choice="apple300">🎁 Золотое яблоко</button>
+                        </div>
+                    {% else %}
+                        <button class="choice-btn disabled" disabled>❌ Не хватает {{ 100 - total_points }} кубков</button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Приз за 300 кубков -->
+            <div class="prize-card">
+                <div class="prize-icon"><i class="fas fa-percent"></i></div>
+                <div class="prize-info">
+                    <div class="prize-name">Скидка на уроки 400 рублей</div>
+                    <div class="prize-description">Скидка 400 рублей на следующие уроки</div>
+                    <div class="prize-cost"><i class="fas fa-star"></i> 300 кубков</div>
+                    {% if 10 in exchanged_prize_ids %}
+                        <div class="used-btn">✅ Уже использован</div>
+                    {% elif total_points >= 300 %}
+                        <button class="choice-btn exchange-btn" data-action="/shop/exchange/10">🎁 Обменять</button>
+                    {% else %}
+                        <button class="choice-btn disabled" disabled>❌ Не хватает {{ 300 - total_points }} кубков</button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Приз за 500 кубков (выбор) -->
+            <div class="prize-card">
+                <div class="prize-icon"><i class="fas fa-apple"></i> <i class="fas fa-shopping-bag"></i></div>
+                <div class="prize-info">
+                    <div class="prize-name">Выбери приз на 500 кубков</div>
+                    <div class="prize-description">Золотое яблоко 500 рублей ИЛИ Wildberries 500 рублей</div>
+                    <div class="prize-cost"><i class="fas fa-star"></i> 500 кубков</div>
+                    {% if has_exchanged_500 %}
+                        <div class="used-btn">✅ Уже использован</div>
+                    {% elif total_points >= 500 %}
+                        <div class="choice-buttons">
+                            <button class="choice-btn exchange-btn" data-action="/shop/exchange/500_choice" data-choice="apple500">🎁 Золотое яблоко</button>
+                            <button class="choice-btn exchange-btn" data-action="/shop/exchange/500_choice" data-choice="wb">🎁 Wildberries</button>
+                        </div>
+                    {% else %}
+                        <button class="choice-btn disabled" disabled>❌ Не хватает {{ 500 - total_points }} кубков</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для поздравления -->
+    <div id="congratsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: linear-gradient(135deg, #ffc107, #ff9800); border-radius: 30px; padding: 30px; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+            <div style="font-size: 60px; margin-bottom: 15px;">🎉</div>
+            <h2 style="color: white; margin-bottom: 15px;">Поздравляю!</h2>
+            <p style="color: white; font-size: 18px; margin-bottom: 20px;">Вы использовали промокод!</p>
+            <p style="color: white; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 15px; margin-bottom: 20px;">
+                📩 Напишите мне в личные сообщения в Telegram для получения приза:<br>
+                <strong style="font-size: 20px;">@explorer0988</strong>
+            </p>
+            <button onclick="closeModal()" style="background: white; color: #ff9800; border: none; padding: 10px 25px; border-radius: 30px; font-size: 16px; cursor: pointer; font-weight: bold;">
+                ✅ Ок, сейчас напишу
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Функция отправки запроса через AJAX
+        async function sendExchangeRequest(url, formData) {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData
+                });
+                if (response.ok) {
+                    showCongratsModal();
+                } else {
+                    window.location.href = '/shop?error=Ошибка обмена';
+                }
+            } catch (error) {
+                window.location.href = '/shop?error=Ошибка сети';
+            }
+        }
+        
+        function showCongratsModal() {
+            document.getElementById('congratsModal').style.display = 'flex';
+        }
+        
+        function closeModal() {
+            document.getElementById('congratsModal').style.display = 'none';
+            // Перезагружаем страницу после закрытия окна
+            window.location.href = '/shop';
+        }
+        
+        // Обработчики для всех кнопок обмена
+        document.querySelectorAll('.exchange-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const action = this.dataset.action;
+                const choice = this.dataset.choice;
+                const formData = new FormData();
+                if (choice) {
+                    formData.append('prize_choice', choice);
+                }
+                
+                if (confirm('Подтверждаете обмен?')) {
+                    sendExchangeRequest(action, formData);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

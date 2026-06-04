@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>TutorTrack - Редактирование урока</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 15px 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo i { font-size: 32px; color: #667eea; }
+        .logo h1 { font-size: 24px; color: #333; }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: #f0f2f5;
+            padding: 8px 20px;
+            border-radius: 40px;
+        }
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 25px;
+            text-decoration: none;
+        }
+        
+        .nav-menu {
+            background: white;
+            border-radius: 60px;
+            padding: 10px 25px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .nav-menu a {
+            text-decoration: none;
+            color: #555;
+            padding: 10px 20px;
+            border-radius: 40px;
+            transition: 0.3s;
+        }
+        .nav-menu a:hover { background: #667eea; color: white; }
+        .nav-menu a i { margin-right: 8px; }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .card h2 {
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card h3 {
+            margin: 20px 0 15px;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; color: #555; }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+        select[multiple] {
+            min-height: 150px;
+        }
+        .help-text { font-size: 12px; color: #999; margin-top: 5px; }
+        .btn {
+            background: #ffc107;
+            color: #333;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        .btn:hover { background: #e0a800; }
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+            width: 100%;
+        }
+        .btn-cancel:hover { background: #5a6268; }
+        hr { margin: 20px 0; border-color: #eee; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-edit"></i>
+                <h1>TutorTrack</h1>
+            </div>
+            <div class="user-info">
+                <i class="fas fa-user-circle"></i>
+                <span><strong>{{ current_user.first_name }} {{ current_user.last_name }}</strong> <span style="color: #667eea;">(Репетитор)</span></span>
+                <a href="/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+            </div>
+        </div>
+
+        <div class="nav-menu">
+            <a href="/"><i class="fas fa-calendar-alt"></i> Уроки</a>
+            <a href="/students"><i class="fas fa-users"></i> Ученики</a>
+            <a href="/lesson/add"><i class="fas fa-plus-circle"></i> Новый урок</a>
+        </div>
+
+        <div class="card">
+            <h2><i class="fas fa-edit"></i> Редактирование урока</h2>
+            <form method="POST" id="editLessonForm">
+                <div class="form-group">
+                    <label><i class="fas fa-calendar-alt"></i> Дата и время урока *</label>
+                    <input type="datetime-local" name="lesson_date" value="{{ lesson.lesson_date.strftime('%Y-%m-%dT%H:%M') if lesson.lesson_date else '' }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-tag"></i> Статус урока</label>
+                    <select name="lesson_status">
+                        <option value="Запланирован" {% if lesson.lesson_status == 'Запланирован' %}selected{% endif %}>📌 Запланирован</option>
+                        <option value="Проведён" {% if lesson.lesson_status == 'Проведён' %}selected{% endif %}>✅ Проведён</option>
+                        <option value="Отменён" {% if lesson.lesson_status == 'Отменён' %}selected{% endif %}>❌ Отменён</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-money-bill-wave"></i> Статус оплаты</label>
+                    <select name="payment_status">
+                        <option value="Не оплачен" {% if lesson.payment_status == 'Не оплачен' %}selected{% endif %}>❌ Не оплачен</option>
+                        <option value="Оплачен" {% if lesson.payment_status == 'Оплачен' %}selected{% endif %}>✅ Оплачен</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-user-tie"></i> Фамилия репетитора *</label>
+                    <input type="text" name="tutor_last_name" value="{{ lesson.tutor_last_name }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-user-tie"></i> Имя репетитора *</label>
+                    <input type="text" name="tutor_first_name" value="{{ lesson.tutor_first_name }}" required>
+                </div>
+
+                <hr>
+                <h3><i class="fas fa-tasks"></i> Домашнее задание</h3>
+
+                <div class="form-group">
+                    <label>Описание домашнего задания</label>
+                    <textarea name="assignment_description" rows="3">{% if homeworks %}{{ homeworks[0].assignment_description }}{% endif %}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-clock"></i> Срок сдачи (дедлайн)</label>
+                    <input type="datetime-local" name="homework_due_date" value="{% if homeworks and homeworks[0].due_date %}{{ homeworks[0].due_date.strftime('%Y-%m-%dT%H:%M') }}{% endif %}">
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-link"></i> Ссылка на домашнее задание</label>
+                    <input type="url" name="homework_link" value="{{ lesson.homework_link if lesson.homework_link else '' }}" placeholder="https://...">
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-chalkboard"></i> Ссылка на виртуальную доску</label>
+                    <input type="url" name="board_link" value="{{ lesson.board_link if lesson.board_link else '' }}" placeholder="https://...">
+                </div>
+
+                <hr>
+                <h3><i class="fas fa-users"></i> Ученики на уроке</h3>
+
+                <div class="form-group">
+                    <select name="student_ids_temp" multiple size="5" id="student_select">
+                        {% for student in students %}
+                            {% set is_selected = student in lesson.students %}
+                            <option value="{{ student.student_id }}" {% if is_selected %}selected{% endif %}>{{ student.last_name }} {{ student.first_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="help-text">Удерживайте Ctrl (Cmd) для выбора нескольких учеников</div>
+                </div>
+
+                <button type="submit" class="btn"><i class="fas fa-save"></i> Сохранить изменения</button>
+                <a href="/lesson/{{ lesson.lesson_id }}" class="btn-cancel"><i class="fas fa-times"></i> Отмена</a>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('editLessonForm').addEventListener('submit', function(e) {
+            var select = document.getElementById('student_select');
+            var selected = Array.from(select.selectedOptions).map(opt => opt.value);
+            
+            // Создаём скрытое поле с объединёнными ID через запятую
+            var hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'student_ids';
+            hiddenInput.value = selected.join(',');
+            
+            // Очищаем оригинальный select (удаляем атрибут name)
+            select.removeAttribute('name');
+            this.appendChild(hiddenInput);
+            
+            console.log('Отправляем учеников ID:', selected);
+        });
+    </script>
+</body>
+</html>

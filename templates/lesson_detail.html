@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TutorTrack - Детали урока</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 15px 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo i { font-size: 32px; color: #667eea; }
+        .logo h1 { font-size: 24px; color: #333; }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: #f0f2f5;
+            padding: 8px 20px;
+            border-radius: 40px;
+        }
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 25px;
+            text-decoration: none;
+        }
+        
+        .nav-menu {
+            background: white;
+            border-radius: 60px;
+            padding: 10px 25px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .nav-menu a {
+            text-decoration: none;
+            color: #555;
+            padding: 10px 20px;
+            border-radius: 40px;
+            transition: 0.3s;
+        }
+        .nav-menu a:hover { background: #667eea; color: white; }
+        .nav-menu a i { margin-right: 8px; }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 25px;
+        }
+        .card-header h2 { margin-bottom: 5px; }
+        .card-body { padding: 25px; }
+        
+        .info-row {
+            display: flex;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .info-label {
+            width: 140px;
+            font-weight: bold;
+            color: #555;
+        }
+        .info-value { flex: 1; color: #333; }
+        
+        .link-buttons {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .link-btn {
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            color: white;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-board { background: #28a745; }
+        .btn-homework { background: #17a2b8; }
+        .btn-edit { background: #ffc107; color: #333; }
+        .btn-delete { background: #dc3545; }
+        
+        .homework-card {
+            background: #f8f9fa;
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        /* Стили для списка учеников с оценками */
+        .students-grades {
+            margin-top: 15px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        .student-grade-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .student-name {
+            font-weight: bold;
+            color: #333;
+        }
+        .grade-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .points-input {
+            width: 70px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+        .btn-grade {
+            background: #ffc107;
+            color: #333;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+        .btn-grade:hover { background: #e0a800; }
+        .points-badge {
+            background: #ffc107;
+            color: #333;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            font-size: 14px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: white;
+            text-decoration: none;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 18px;
+            border-radius: 30px;
+        }
+        hr { margin: 20px 0; border-color: #eee; }
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        @media (max-width: 768px) {
+            .student-grade-item {
+                flex-direction: column;
+                gap: 10px;
+                align-items: stretch;
+            }
+            .grade-form {
+                justify-content: space-between;
+            }
+            .info-label {
+                width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> На главную</a>
+        
+        <!-- Информация об уроке -->
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-chalkboard"></i> Урок от {{ lesson.lesson_date.strftime('%d.%m.%Y') if lesson.lesson_date else '-' }}</h2>
+                <p>{{ lesson.lesson_time if lesson.lesson_time else '' }}</p>
+            </div>
+            <div class="card-body">
+                <div class="info-row">
+                    <div class="info-label">📅 Дата и время:</div>
+                    <div class="info-value">{{ lesson.lesson_date.strftime('%d.%m.%Y %H:%M') if lesson.lesson_date else '-' }}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">👨‍🏫 Репетитор:</div>
+                    <div class="info-value">{{ lesson.tutor_last_name }} {{ lesson.tutor_first_name }}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">👨‍🎓 Ученики:</div>
+                    <div class="info-value">
+                        {% for student in lesson.students %}
+                            {{ student.last_name }} {{ student.first_name }}{% if not loop.last %}, {% endif %}
+                        {% else %} - {% endfor %}
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">📌 Статус:</div>
+                    <div class="info-value">
+                        {% if lesson.lesson_status == 'Запланирован' %}
+                            <span style="color: blue;">📌 Запланирован</span>
+                        {% elif lesson.lesson_status == 'Проведён' %}
+                            <span style="color: green;">✅ Проведён</span>
+                        {% else %}
+                            <span style="color: red;">❌ Отменён</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">💰 Оплата:</div>
+                    <div class="info-value">
+                        {% if lesson.payment_status == 'Оплачен' %}
+                            <span style="color: green;">✅ Оплачен</span>
+                        {% else %}
+                            <span style="color: red;">❌ Не оплачен</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="link-buttons">
+                    {% if lesson.board_link %}
+                        <a href="{{ lesson.board_link }}" target="_blank" class="link-btn btn-board"><i class="fas fa-chalkboard"></i> Открыть доску</a>
+                    {% endif %}
+                    {% if lesson.homework_link %}
+                        <a href="{{ lesson.homework_link }}" target="_blank" class="link-btn btn-homework"><i class="fas fa-tasks"></i> Открыть ДЗ</a>
+                    {% endif %}
+                    {% if current_user.is_tutor == 1 %}
+                        <a href="/lesson/{{ lesson.lesson_id }}/edit" class="link-btn btn-edit"><i class="fas fa-edit"></i> Редактировать</a>
+                        <form method="POST" action="/lesson/{{ lesson.lesson_id }}/delete" style="display: inline;" onsubmit="return confirm('Удалить урок?')">
+                            <button type="submit" class="link-btn btn-delete" style="border: none;"><i class="fas fa-trash"></i> Удалить</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Домашние задания -->
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-tasks"></i> Домашние задания</h2>
+            </div>
+            <div class="card-body">
+                {% if homeworks %}
+                    {% for homework in homeworks %}
+                    <div class="homework-card">
+                        <p><strong>📝 Описание:</strong></p>
+                        <p style="margin: 10px 0; background: white; padding: 12px; border-radius: 12px;">{{ homework.assignment_description }}</p>
+                        
+                        <div class="info-row">
+                            <div class="info-label">⏰ Срок сдачи:</div>
+                            <div class="info-value">{{ homework.due_date.strftime('%d.%m.%Y %H:%M') if homework.due_date else 'Не указан' }}</div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <div class="info-label">⭐ Средняя оценка:</div>
+                            <div class="info-value">
+                                {% set total = namespace(value=0) %}
+                                {% set count = namespace(value=0) %}
+                                {% for student in lesson.students %}
+                                    {% set student_points = homework_points.get(homework.homework_id, {}).get(student.student_id, '—') %}
+                                    {% if student_points != '—' %}
+                                        {% set total.value = total.value + (student_points|int) %}
+                                        {% set count.value = count.value + 1 %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% if count.value > 0 %}
+                                    {{ (total.value / count.value)|round(1) }} / 10
+                                {% else %}
+                                    Нет оценок
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        {% if current_user.is_tutor == 1 %}
+                        <hr>
+                        <h4 style="margin-bottom: 15px;"><i class="fas fa-user-graduate"></i> Выставить оценки ученикам:</h4>
+                        <div class="students-grades">
+                            {% for student in lesson.students %}
+                            <div class="student-grade-item">
+                                <span class="student-name">
+                                    <i class="fas fa-user"></i> {{ student.last_name }} {{ student.first_name }}
+                                </span>
+                                <form method="POST" action="/homework/{{ homework.homework_id }}/grade/{{ student.student_id }}" class="grade-form">
+                                    <input type="number" name="points" min="0" max="10" value="{{ homework_points.get(homework.homework_id, {}).get(student.student_id, 0) }}" class="points-input" step="1">
+                                    <button type="submit" class="btn-grade">
+                                        <i class="fas fa-star"></i> Выставить оценку
+                                    </button>
+                                </form>
+                            </div>
+                            {% else %}
+                            <p class="empty-state">Нет учеников на этом уроке</p>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <!-- Для ученика: показываем его оценку -->
+                        <hr>
+                        <div class="info-row">
+                            <div class="info-label">⭐ Ваша оценка:</div>
+                            <div class="info-value">
+                                {% set user_points = homework_points.get(homework.homework_id, {}).get(current_user.student_id, '—') %}
+                                {% if user_points != '—' %}
+                                    <span class="points-badge"><i class="fas fa-star"></i> {{ user_points }} / 10 кубков</span>
+                                {% else %}
+                                    <span style="color: #999;">Не оценено</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if current_user.is_tutor == 1 %}
+                        <hr>
+                        <form method="POST" action="/homework/{{ homework.homework_id }}/delete" onsubmit="return confirm('Удалить задание?')">
+                            <button type="submit" style="background: none; border: none; color: #dc3545; cursor: pointer;"><i class="fas fa-trash"></i> Удалить задание</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open" style="font-size: 50px; margin-bottom: 15px;"></i>
+                        <p>Нет домашних заданий</p>
+                    </div>
+                {% endif %}
+                
+                {% if current_user.is_tutor == 1 %}
+                <hr>
+                <h3 style="margin-bottom: 15px;">➕ Добавить домашнее задание</h3>
+                <form method="POST" action="/lesson/{{ lesson.lesson_id }}/homework/add">
+                    <textarea name="assignment_description" rows="3" style="width: 100%; padding: 12px; border-radius: 15px; border: 1px solid #ddd; margin-bottom: 10px;" placeholder="Описание задания"></textarea>
+                    <input type="datetime-local" name="due_date" style="width: 100%; padding: 10px; border-radius: 12px; border: 1px solid #ddd; margin-bottom: 10px;">
+                    <button type="submit" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer;"><i class="fas fa-plus"></i> Добавить ДЗ</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
