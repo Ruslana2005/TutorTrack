@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>TutorTrack - Мои достижения</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 15px 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo i { font-size: 32px; color: #667eea; }
+        .logo h1 { font-size: 24px; color: #333; }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: #f0f2f5;
+            padding: 8px 20px;
+            border-radius: 40px;
+        }
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 25px;
+            text-decoration: none;
+        }
+        
+        .nav-menu {
+            background: white;
+            border-radius: 60px;
+            padding: 10px 25px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .nav-menu a {
+            text-decoration: none;
+            color: #555;
+            padding: 10px 20px;
+            border-radius: 40px;
+            transition: 0.3s;
+        }
+        .nav-menu a:hover { background: #667eea; color: white; }
+        .nav-menu a i { margin-right: 8px; }
+        
+        .achievement-card {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .total-points {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .total-points h2 { font-size: 48px; color: #ffc107; }
+        .total-points i { font-size: 50px; color: #ffc107; }
+        
+        .progress-container { margin: 30px 0; }
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 20px;
+            height: 30px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #ffc107, #ff9800);
+            width: 0%;
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .levels-track {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 40px;
+        }
+        .level-item {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 20px;
+            transition: 0.3s;
+            position: relative;
+        }
+        .level-item.achieved {
+            background: linear-gradient(135deg, #ffc107, #ff9800);
+            color: white;
+            transform: scale(1.05);
+        }
+        .level-icon { font-size: 40px; margin-bottom: 10px; }
+        .level-name { font-weight: bold; font-size: 14px; }
+        .level-requirement { font-size: 12px; color: #888; margin-top: 5px; }
+        .level-item.achieved .level-requirement { color: rgba(255,255,255,0.8); }
+        .check-icon {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #28a745;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .points-history { margin-top: 30px; }
+        .history-list { max-height: 300px; overflow-y: auto; }
+        .history-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .points-badge {
+            background: #ffc107;
+            color: #333;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .levels-track { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-trophy"></i>
+                <h1>TutorTrack</h1>
+            </div>
+            <div class="user-info">
+                <i class="fas fa-user-circle"></i>
+                <span><strong>{{ current_user.first_name }} {{ current_user.last_name }}</strong> <span style="color: #28a745;">(Ученик)</span></span>
+                <a href="/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+            </div>
+        </div>
+
+        <div class="nav-menu">
+            <a href="/"><i class="fas fa-calendar-alt"></i> Уроки</a>
+            <a href="/achievements" style="background: #ffc107; color: #333;"><i class="fas fa-trophy"></i> Достижения</a>
+            <a href="/shop"><i class="fas fa-store"></i> Лавка</a>
+        </div>
+
+        <div class="achievement-card">
+            <div class="total-points">
+                <i class="fas fa-star"></i>
+                <h2>{{ total_points }}</h2>
+                <p>Всего кубков</p>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-label">
+                    <span>Прогресс до следующего уровня</span>
+                    <span>{{ next_level_required }} кубков до {{ next_level_name }}</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ progress_percent }}%;">
+                        {% if progress_percent > 20 %}{{ progress_percent }}%{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="levels-track">
+                {% for level in levels %}
+                <div class="level-item {% if level.achieved %}achieved{% endif %}" data-points="{{ level.required }}">
+                    {% if level.achieved %}
+                        <div class="check-icon"><i class="fas fa-check"></i></div>
+                    {% endif %}
+                    <div class="level-icon">{{ level.icon|safe }}</div>
+                    <div class="level-name">{{ level.name }}</div>
+                    <div class="level-requirement">{{ level.required }}+ кубков</div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="points-history">
+                <h3><i class="fas fa-history"></i> История оценок</h3>
+                <div class="history-list">
+                    {% for homework in homeworks %}
+                    <div class="history-item">
+                        <div>
+                            <strong>{{ homework.lesson.lesson_date.strftime('%d.%m.%Y') if homework.lesson.lesson_date else '-' }}</strong>
+                            <span style="color: #666; font-size: 14px; margin-left: 10px;">{{ homework.assignment_description[:50] }}{% if homework.assignment_description|length > 50 %}...{% endif %}</span>
+                        </div>
+                        <div class="points-badge">
+                            <i class="fas fa-star"></i> {{ homework.points }} кубков
+                        </div>
+                    </div>
+                    {% else %}
+                    <p style="color: #999; text-align: center;">Пока нет оценок</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
