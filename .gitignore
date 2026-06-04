@@ -1,0 +1,6 @@
+venv/ 
+__pycache__/ 
+*.pyc 
+*.rar 
+*.zip 
+tutor_app/venv/ 
